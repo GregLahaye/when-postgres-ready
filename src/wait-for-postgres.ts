@@ -5,13 +5,15 @@ export const waitForPostgres = async ({
   port,
   timeout,
   interval,
+  wait,
 }: {
   host: string;
   port: number;
   timeout: number;
   interval: number;
+  wait: number;
 }) => {
-  new Promise<void>((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     const startTime = Date.now();
 
     const intervalId = setInterval(async () => {
@@ -29,6 +31,8 @@ export const waitForPostgres = async ({
       }
     }, interval);
   });
+
+  await sleep(wait);
 };
 
 const connectToPostgres = ({ host, port }: { host: string; port: number }) => {
@@ -43,5 +47,11 @@ const connectToPostgres = ({ host, port }: { host: string; port: number }) => {
     socket.on("timeout", () => fail());
 
     socket.connect({ host, port }, () => socket.end(() => resolve()));
+  });
+};
+
+const sleep = (ms: number) => {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => resolve(), ms);
   });
 };

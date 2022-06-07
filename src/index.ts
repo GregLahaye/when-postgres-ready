@@ -12,14 +12,16 @@ const app = async ({
   port,
   timeout,
   interval,
+  wait,
 }: {
   script: string;
   host: string;
   port: number;
   timeout: number;
   interval: number;
+  wait: number;
 }) => {
-  await waitForPostgres({ host, port, timeout, interval });
+  await waitForPostgres({ host, port, timeout, interval, wait });
   runScript({ script });
 };
 
@@ -59,5 +61,11 @@ yargs(hideBin(process.argv))
     type: "number",
     description: "postgres connection interval",
     default: 200,
+  })
+  .option("wait", {
+    alias: "w",
+    type: "number",
+    description: "wait after postgres connection",
+    default: 5_000,
   })
   .parse();
